@@ -1,0 +1,51 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy container app to Azure Web App - alterbooth-todo
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Log in to registry
+      uses: docker/login-action@v1
+      with:
+        registry: https://alterboothtodo.azurecr.io/
+        username: ${{ secrets.AzureAppService_ContainerUsername_d8d4b84da16b45be81cf49fa3018c0e6 }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_3c9d6885b11743339aa166d9755918a3 }}
+
+    - name: Build and push container image to registry
+      uses: docker/build-push-action@v2
+      with:
+        push: true
+        tags: alterboothtodo.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_d8d4b84da16b45be81cf49fa3018c0e6 }}/hello-world-2:${{ github.sha }}
+        file: ./Dockerfile
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+    - name: Deploy to Azure Web App
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'alterbooth-todo'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_60c429967a72499a8bfbaffb9735bd88 }}
+        images: 'alterboothtodo.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_d8d4b84da16b45be81cf49fa3018c0e6 }}/hello-world-2:${{ github.sha }}'
