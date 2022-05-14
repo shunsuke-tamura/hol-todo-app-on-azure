@@ -23,14 +23,14 @@ jobs:
       uses: docker/login-action@v1
       with:
         registry: https://alterboothtodo.azurecr.io/
-        username: ${{ secrets.AzureAppService_ContainerUsername_d8d4b84da16b45be81cf49fa3018c0e6 }}
-        password: ${{ secrets.AzureAppService_ContainerPassword_3c9d6885b11743339aa166d9755918a3 }}
+        username: ${{ secrets.AzureAppService_ContainerUsername_81ae53a07c6c4f6384b1a04a60214d04 }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_4ceb4eb4d3be463aa9e0f35428b67b5f }}
 
     - name: Build and push container image to registry
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: alterboothtodo.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_d8d4b84da16b45be81cf49fa3018c0e6 }}/hello-world-2:${{ github.sha }}
+        tags: alterboothtodo.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_81ae53a07c6c4f6384b1a04a60214d04 }}/hello-world:${{ github.sha }}
         file: ./Dockerfile
 
   deploy:
@@ -47,5 +47,5 @@ jobs:
       with:
         app-name: 'alterbooth-todo'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_60c429967a72499a8bfbaffb9735bd88 }}
-        images: 'alterboothtodo.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_d8d4b84da16b45be81cf49fa3018c0e6 }}/hello-world-2:${{ github.sha }}'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_13b5b4c88c2a4e6d9875cdf9a20cc6a0 }}
+        images: 'alterboothtodo.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_81ae53a07c6c4f6384b1a04a60214d04 }}/hello-world:${{ github.sha }}'
